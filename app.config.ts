@@ -2,7 +2,7 @@ import { ExpoConfig, ConfigContext } from 'expo/config';
 
 const ENV = {
   local: {
-    apiUrl: 'http://192.168.1.12:3000',
+    apiUrl: 'http://192.168.1.2:3000',
   },
   development: {
     apiUrl: 'https://simni-bullion-app-be.onrender.com',

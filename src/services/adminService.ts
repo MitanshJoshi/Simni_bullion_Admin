@@ -2,6 +2,12 @@ import apiClient from './apiClient';
 
 // ── KYC ───────────────────────────────────────────────────────────────────
 
+export interface KycDocument {
+  id: string;
+  documentType: string;
+  documentUrl: string;
+}
+
 export interface PendingKycItem {
   userId: string;
   email: string;
@@ -13,6 +19,7 @@ export interface PendingKycItem {
     submittedAt: string | null;
     rejectReason: string | null;
   };
+  documents: KycDocument[];
 }
 
 export async function getPendingKyc(): Promise<{ total: number; items: PendingKycItem[] }> {
@@ -41,6 +48,7 @@ export interface AdminOrder {
   id: string;
   userId: string;
   productId: string | null;
+  productName: string | null;
   metal: 'GOLD' | 'SILVER';
   quantityGrams: number;
   pricePerGram: number;
@@ -91,11 +99,13 @@ export interface AdminProduct {
   id: string;
   name: string;
   metal: 'GOLD' | 'SILVER';
-  premiumPerGram: string;
+  subtitle: string | null;
+  premiumPerGram: number;
+  unitSizeGrams: number | null;
   minQuantityGrams: number;
+  buyPricePerGram: number;
   isActive: boolean;
-  description: string | null;
-  imageUrl: string | null;
+  sortOrder: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -105,38 +115,40 @@ export interface ProductInput {
   metal: 'GOLD' | 'SILVER';
   premiumPerGram: number;
   minQuantityGrams: number;
-  description?: string;
+  unitSizeGrams?: number | null;
+  subtitle?: string;
   isActive?: boolean;
 }
 
 export async function getProducts(): Promise<AdminProduct[]> {
-  const { data } = await apiClient.get('/products');
+  const { data } = await apiClient.get('/admin/products');
   return data.data.products ?? data.data ?? [];
 }
 
 export async function createProduct(input: ProductInput): Promise<AdminProduct> {
-  const { data } = await apiClient.post('/products', input);
+  const { data } = await apiClient.post('/admin/products', input);
   return data.data.product ?? data.data;
 }
 
 export async function updateProduct(id: string, input: Partial<ProductInput>): Promise<AdminProduct> {
-  const { data } = await apiClient.patch(`/products/${id}`, input);
+  const { data } = await apiClient.patch(`/admin/products/${id}`, input);
   return data.data.product ?? data.data;
 }
 
 export async function deleteProduct(id: string): Promise<void> {
-  await apiClient.delete(`/products/${id}`);
+  await apiClient.delete(`/admin/products/${id}`);
 }
 
 // ── Users ─────────────────────────────────────────────────────────────────
 
 export interface AdminUserListItem {
-  userId: string;
+  id: string;
   email: string;
   firstName: string | null;
   lastName: string | null;
   loginId: string;
   isActive: boolean;
+  isAdmin: boolean;
   kycStatus: string | null;
   createdAt: string;
 }
@@ -162,7 +174,7 @@ export async function getAdminUsers(
 
 export async function getAdminUserDetail(userId: string): Promise<AdminUserDetail> {
   const { data } = await apiClient.get(`/admin/users/${userId}`);
-  return data.data;
+  return data.data.user;
 }
 
 export async function deactivateUser(userId: string): Promise<void> {
@@ -182,12 +194,12 @@ export interface PriceConfig {
 
 export async function getPriceConfig(): Promise<PriceConfig> {
   const { data } = await apiClient.get('/admin/prices/config');
-  return data.data;
+  return data.data.config;
 }
 
 export async function updatePriceConfig(input: Partial<PriceConfig>): Promise<PriceConfig> {
   const { data } = await apiClient.patch('/admin/prices/config', input);
-  return data.data;
+  return data.data.config;
 }
 
 // ── Audit Logs ────────────────────────────────────────────────────────────

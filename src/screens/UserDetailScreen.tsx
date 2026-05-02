@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
-  FlatList,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -67,13 +66,13 @@ export default function UserDetailScreen() {
         {
           text: 'Deactivate',
           style: 'destructive',
-          onPress: () => deactivate.mutate(user.userId, {
+          onPress: () => deactivate.mutate(user.id, {
             onError: () => Alert.alert('Error', 'Failed to deactivate user'),
           }),
         },
       ]);
     } else {
-      activate.mutate(user.userId, {
+      activate.mutate(user.id, {
         onError: () => Alert.alert('Error', 'Failed to activate user'),
       });
     }
@@ -123,6 +122,11 @@ export default function UserDetailScreen() {
           <Text style={styles.backText}>‹</Text>
         </TouchableOpacity>
         <Text style={styles.title}>{name}</Text>
+        {user.isAdmin && (
+          <View style={[styles.deactivatedBadge, { backgroundColor: '#EFF6FF' }]}>
+            <Text style={[styles.deactivatedText, { color: '#1D4ED8' }]}>Admin</Text>
+          </View>
+        )}
         {!user.isActive && (
           <View style={styles.deactivatedBadge}>
             <Text style={styles.deactivatedText}>Deactivated</Text>
@@ -151,19 +155,21 @@ export default function UserDetailScreen() {
         </Section>
 
         {/* Action */}
-        <TouchableOpacity
-          style={[styles.toggleBtn, user.isActive ? styles.deactivateBtn : styles.activateBtn, isBusy && styles.btnDisabled]}
-          onPress={handleToggleActive}
-          disabled={isBusy}
-        >
-          {isBusy ? (
-            <ActivityIndicator color={colors.white} />
-          ) : (
-            <Text style={styles.toggleBtnText}>
-              {user.isActive ? '🚫  Deactivate Account' : '✅  Activate Account'}
-            </Text>
-          )}
-        </TouchableOpacity>
+        {!user.isAdmin && (
+          <TouchableOpacity
+            style={[styles.toggleBtn, user.isActive ? styles.deactivateBtn : styles.activateBtn, isBusy && styles.btnDisabled]}
+            onPress={handleToggleActive}
+            disabled={isBusy}
+          >
+            {isBusy ? (
+              <ActivityIndicator color={colors.white} />
+            ) : (
+              <Text style={styles.toggleBtnText}>
+                {user.isActive ? '🚫  Deactivate Account' : '✅  Activate Account'}
+              </Text>
+            )}
+          </TouchableOpacity>
+        )}
 
         {/* Orders */}
         <Text style={styles.ordersTitle}>Order History ({user.orders?.length ?? 0})</Text>

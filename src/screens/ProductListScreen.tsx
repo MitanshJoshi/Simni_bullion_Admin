@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -69,7 +69,8 @@ export default function ProductListScreen() {
               metal: item.metal,
               premiumPerGram: item.premiumPerGram,
               minQuantityGrams: item.minQuantityGrams,
-              description: item.description,
+              unitSizeGrams: item.unitSizeGrams,
+              subtitle: item.subtitle,
               isActive: item.isActive,
             })
           }
@@ -77,7 +78,7 @@ export default function ProductListScreen() {
           <Text style={styles.editBtnText}>Edit</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.deleteBtn} onPress={() => handleDelete(item)}>
-          <Text style={styles.deleteBtnText}>🗑</Text>
+          <Text style={styles.deleteBtnText}>Remove</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -179,8 +180,8 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   editBtnText: { fontFamily: fonts.interSemiBold, fontSize: 13, color: colors.primary },
-  deleteBtn: { padding: 6 },
-  deleteBtnText: { fontSize: 18 },
+  deleteBtn: { paddingHorizontal: 10, paddingVertical: 5, backgroundColor: colors.redLight, borderRadius: 6, borderWidth: 1, borderColor: colors.red + '44' },
+  deleteBtnText: { fontFamily: fonts.interSemiBold, fontSize: 13, color: colors.red },
 
   empty: { alignItems: 'center', marginTop: 80, gap: 12 },
   emptyIcon: { fontSize: 48 },

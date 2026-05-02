@@ -31,7 +31,8 @@ export default function ProductFormScreen() {
   const [metal, setMetal] = useState<'GOLD' | 'SILVER'>(params?.metal ?? 'GOLD');
   const [premium, setPremium] = useState(params?.premiumPerGram ?? '');
   const [minQty, setMinQty] = useState(params?.minQuantityGrams?.toString() ?? '');
-  const [description, setDescription] = useState(params?.description ?? '');
+  const [unitSize, setUnitSize] = useState(params?.unitSizeGrams?.toString() ?? '');
+  const [subtitle, setSubtitle] = useState(params?.subtitle ?? '');
   const [isActive, setIsActive] = useState(params?.isActive ?? true);
 
   const createProduct = useCreateProduct();
@@ -48,7 +49,8 @@ export default function ProductFormScreen() {
       metal,
       premiumPerGram: Number(premium),
       minQuantityGrams: Number(minQty),
-      description: description.trim() || undefined,
+      unitSizeGrams: unitSize ? Number(unitSize) : null,
+      subtitle: subtitle.trim() || undefined,
       isActive,
     };
 
@@ -61,6 +63,8 @@ export default function ProductFormScreen() {
         },
       );
     } else {
+
+      console.log("input is",input)
       createProduct.mutate(input, {
         onSuccess: () => navigation.goBack(),
         onError: () => Alert.alert('Error', 'Failed to create product'),
@@ -126,27 +130,35 @@ export default function ProductFormScreen() {
           />
         </Field>
 
-        <Field label="Minimum Quantity (grams)">
+        <Field label="Unit Size (grams) — leave blank for free gram input">
           <TextInput
             style={styles.input}
-            value={minQty}
-            onChangeText={setMinQty}
-            placeholder="e.g. 1"
+            value={unitSize}
+            onChangeText={setUnitSize}
+            placeholder="e.g. 100 for a 100g Gold Bar"
             placeholderTextColor={colors.textMuted}
             keyboardType="decimal-pad"
           />
         </Field>
 
-        <Field label="Description (optional)">
+        <Field label="Minimum Order Quantity (grams)">
           <TextInput
-            style={[styles.input, styles.multiline]}
-            value={String(description ?? '')}
-            onChangeText={setDescription}
-            placeholder="Product description..."
+            style={styles.input}
+            value={minQty}
+            onChangeText={setMinQty}
+            placeholder="e.g. 100 for 1 bar, 200 for 2 bars"
             placeholderTextColor={colors.textMuted}
-            multiline
-            numberOfLines={3}
-            textAlignVertical="top"
+            keyboardType="decimal-pad"
+          />
+        </Field>
+
+        <Field label="Subtitle (optional)">
+          <TextInput
+            style={styles.input}
+            value={subtitle}
+            onChangeText={setSubtitle}
+            placeholder="e.g. 999.9 Fine Gold"
+            placeholderTextColor={colors.textMuted}
           />
         </Field>
 

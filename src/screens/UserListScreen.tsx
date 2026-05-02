@@ -50,7 +50,7 @@ export default function UserListScreen() {
       <TouchableOpacity
         style={styles.card}
         activeOpacity={0.75}
-        onPress={() => navigation.navigate('UserDetail', { userId: item.userId })}
+        onPress={() => navigation.navigate('UserDetail', { userId: item.id })}
       >
         <View style={styles.cardLeft}>
           <View style={[styles.avatar, !item.isActive && styles.avatarInactive]}>
@@ -117,7 +117,7 @@ export default function UserListScreen() {
       ) : (
         <FlatList
           data={users}
-          keyExtractor={(u) => u.userId}
+          keyExtractor={(u) => u.id}
           renderItem={renderItem}
           contentContainerStyle={styles.list}
           refreshControl={

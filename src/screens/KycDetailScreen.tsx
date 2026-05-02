@@ -9,6 +9,7 @@ import {
   TextInput,
   ActivityIndicator,
   Alert,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -99,6 +100,29 @@ export default function KycDetailScreen() {
               <Row label="Reject Reason" value={params.kycProfile.rejectReason} />
             ) : null}
           </View>
+        </View>
+
+        {/* Documents */}
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>Uploaded Documents</Text>
+          {params.documents.length === 0 ? (
+            <View style={styles.card}>
+              <Text style={styles.noDocsText}>No documents uploaded</Text>
+            </View>
+          ) : (
+            <View style={styles.card}>
+              {params.documents.map((doc, i) => (
+                <TouchableOpacity
+                  key={doc.id}
+                  style={[styles.docRow, i === params.documents.length - 1 && { borderBottomWidth: 0 }]}
+                  onPress={() => Linking.openURL(doc.documentUrl)}
+                >
+                  <Text style={styles.docType}>{doc.documentType.replace(/_/g, ' ')}</Text>
+                  <Text style={styles.docLink}>View ›</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
         </View>
 
         {/* Actions */}
@@ -284,4 +308,16 @@ const styles = StyleSheet.create({
   cancelBtn: { backgroundColor: colors.background, borderWidth: 1, borderColor: colors.border },
   cancelBtnText: { fontFamily: fonts.interSemiBold, fontSize: 15, color: colors.textSecondary },
   confirmRejectBtn: { backgroundColor: colors.red },
+
+  noDocsText: { fontFamily: fonts.interRegular, fontSize: 14, color: colors.textMuted, paddingVertical: 14, textAlign: 'center' },
+  docRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  docType: { fontFamily: fonts.interSemiBold, fontSize: 13, color: colors.primary, textTransform: 'capitalize' },
+  docLink: { fontFamily: fonts.interSemiBold, fontSize: 13, color: colors.accent },
 });

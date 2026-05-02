@@ -82,7 +82,31 @@ export default function SettingsScreen() {
 
       <ScrollView contentContainerStyle={styles.scroll}>
         {/* Price Config */}
-        <Text style={styles.sectionLabel}>Price Configuration</Text>
+        <Text style={styles.sectionLabel}>Minimum Buy Configuration</Text>
+
+        {/* Current config (read-only) */}
+        <View style={[styles.card, { marginBottom: 16 }]}>
+          <Text style={styles.currentLabel}>Current Active Values</Text>
+          {configLoading ? (
+            <ActivityIndicator style={{ paddingVertical: 12 }} color={colors.accent} />
+          ) : (
+            <View style={styles.currentRow}>
+              <View style={styles.currentItem}>
+                <Text style={styles.currentMetal}>🥇 Gold</Text>
+                <Text style={styles.currentValue}>{config ? `${config.goldMinBuyGrams}g` : '—'}</Text>
+                <Text style={styles.currentSub}>min buy</Text>
+              </View>
+              <View style={styles.currentDivider} />
+              <View style={styles.currentItem}>
+                <Text style={styles.currentMetal}>🥈 Silver</Text>
+                <Text style={styles.currentValue}>{config ? `${config.silverMinBuyGrams}g` : '—'}</Text>
+                <Text style={styles.currentSub}>min buy</Text>
+              </View>
+            </View>
+          )}
+        </View>
+
+        {/* Editable fields */}
         <View style={styles.card}>
           {configLoading ? (
             <ActivityIndicator style={{ paddingVertical: 20 }} color={colors.accent} />
@@ -213,4 +237,23 @@ const styles = StyleSheet.create({
     borderColor: colors.red + '44',
   },
   logoutText: { fontFamily: fonts.interBold, fontSize: 15, color: colors.red },
+
+  currentLabel: {
+    fontFamily: fonts.interSemiBold,
+    fontSize: 11,
+    color: colors.textMuted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+    paddingTop: 12,
+    marginBottom: 12,
+  },
+  currentRow: {
+    flexDirection: 'row',
+    paddingBottom: 16,
+  },
+  currentItem: { flex: 1, alignItems: 'center' },
+  currentMetal: { fontFamily: fonts.interMedium, fontSize: 13, color: colors.textSecondary, marginBottom: 4 },
+  currentValue: { fontFamily: fonts.interBold, fontSize: 22, color: colors.primary },
+  currentSub: { fontFamily: fonts.interRegular, fontSize: 11, color: colors.textMuted, marginTop: 2 },
+  currentDivider: { width: 1, backgroundColor: colors.border, marginVertical: 4 },
 });

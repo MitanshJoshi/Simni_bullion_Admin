@@ -16,6 +16,7 @@ export type AppStackParamList = {
       submittedAt: string | null;
       rejectReason: string | null;
     };
+    documents: { id: string; documentType: string; documentUrl: string }[];
   };
   OrderList: { initialStatus?: string } | undefined;
   OrderDetail: { orderId: string };
@@ -26,7 +27,8 @@ export type AppStackParamList = {
     metal?: 'GOLD' | 'SILVER';
     premiumPerGram?: string;
     minQuantityGrams?: number;
-    description?: string | null;
+    unitSizeGrams?: number | null;
+    subtitle?: string | null;
     isActive?: boolean;
   } | undefined;
   UserList: undefined;

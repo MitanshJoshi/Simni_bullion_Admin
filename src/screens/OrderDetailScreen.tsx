@@ -11,6 +11,10 @@ import {
   Alert,
   Image,
   Linking,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -131,6 +135,7 @@ export default function OrderDetailScreen() {
       <ScrollView contentContainerStyle={styles.scroll}>
         {/* Order */}
         <Section title="Order">
+          {order.productName ? <Row label="Product" value={order.productName} /> : null}
           <Row label="Metal" value={`${order.metal === 'GOLD' ? '🥇' : '🥈'} ${order.metal}`} />
           <Row label="Quantity" value={`${order.quantityGrams}g`} />
           <Row label="Price/gram" value={fmt(order.pricePerGram)} />
@@ -193,37 +198,43 @@ export default function OrderDetailScreen() {
         )}
       </ScrollView>
 
-      <Modal visible={rejectModal} transparent animationType="slide" onRequestClose={() => setRejectModal(false)}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalSheet}>
-            <Text style={styles.modalTitle}>Reject Order</Text>
-            <TextInput
-              style={styles.reasonInput}
-              placeholder="Enter rejection reason..."
-              placeholderTextColor={colors.textMuted}
-              value={rejectReason}
-              onChangeText={setRejectReason}
-              multiline
-              numberOfLines={4}
-              textAlignVertical="top"
-            />
-            <View style={styles.modalActions}>
-              <TouchableOpacity
-                style={[styles.modalBtn, { backgroundColor: colors.background, borderWidth: 1, borderColor: colors.border }]}
-                onPress={() => { setRejectModal(false); setRejectReason(''); }}
-              >
-                <Text style={{ fontFamily: fonts.interSemiBold, fontSize: 15, color: colors.textSecondary }}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalBtn, { backgroundColor: colors.red }, reject.isPending && styles.btnDisabled]}
-                onPress={handleReject}
-                disabled={reject.isPending}
-              >
-                {reject.isPending ? <ActivityIndicator color={colors.white} /> : <Text style={styles.btnText}>Reject</Text>}
-              </TouchableOpacity>
+      <Modal visible={rejectModal} transparent animationType="slide" onRequestClose={() => { setRejectModal(false); Keyboard.dismiss(); }}>
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.modalOverlay}>
+              <TouchableWithoutFeedback>
+                <View style={styles.modalSheet}>
+                  <Text style={styles.modalTitle}>Reject Order</Text>
+                  <TextInput
+                    style={styles.reasonInput}
+                    placeholder="Enter rejection reason..."
+                    placeholderTextColor={colors.textMuted}
+                    value={rejectReason}
+                    onChangeText={setRejectReason}
+                    multiline
+                    numberOfLines={4}
+                    textAlignVertical="top"
+                  />
+                  <View style={styles.modalActions}>
+                    <TouchableOpacity
+                      style={[styles.modalBtn, { backgroundColor: colors.background, borderWidth: 1, borderColor: colors.border }]}
+                      onPress={() => { setRejectModal(false); setRejectReason(''); Keyboard.dismiss(); }}
+                    >
+                      <Text style={{ fontFamily: fonts.interSemiBold, fontSize: 15, color: colors.textSecondary }}>Cancel</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[styles.modalBtn, { backgroundColor: colors.red }, reject.isPending && styles.btnDisabled]}
+                      onPress={handleReject}
+                      disabled={reject.isPending}
+                    >
+                      {reject.isPending ? <ActivityIndicator color={colors.white} /> : <Text style={styles.btnText}>Reject</Text>}
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </TouchableWithoutFeedback>
             </View>
-          </View>
-        </View>
+          </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
       </Modal>
     </SafeAreaView>
   );
