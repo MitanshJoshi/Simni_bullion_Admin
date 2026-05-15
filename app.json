@@ -25,6 +25,13 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "apiUrl": "https://simni-bullion-app-be.onrender.com",
+      "env": "development",
+      "eas": {
+        "projectId": "5b52940c-0dc3-49c4-b5e0-cc4d803493e1"
+      }
     }
   }
 }

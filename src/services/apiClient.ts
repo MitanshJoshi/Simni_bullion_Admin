@@ -2,10 +2,17 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import Constants from 'expo-constants';
 
-const BASE_URL = (Constants.expoConfig?.extra?.apiUrl as string) ?? 'http://localhost:3000';
+const BASE_URL = Constants.expoConfig?.extra?.apiUrl as string | undefined;
+
+if (!BASE_URL) {
+  throw new Error(
+    '[apiClient] apiUrl missing from Constants.expoConfig.extra. ' +
+    'Ensure APP_ENV is set correctly for the build profile.'
+  );
+}
 
 const apiClient = axios.create({
-  baseURL: `${BASE_URL}/api`,
+  baseURL: `${BASE_URL!}/api`,
   timeout: 15000,
   headers: { 'Content-Type': 'application/json' },
 });

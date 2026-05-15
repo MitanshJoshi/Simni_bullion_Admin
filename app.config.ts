@@ -12,7 +12,7 @@ const ENV = {
   },
 };
 
-const CURRENT_ENV = (process.env.APP_ENV || 'local') as keyof typeof ENV;
+const CURRENT_ENV = (process.env.APP_ENV || 'development') as keyof typeof ENV;
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
@@ -21,13 +21,18 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     bundleIdentifier: 'com.simnibullion.admin',
     supportsTablet: true,
+    buildNumber: '1',
   },
   android: {
     package: 'com.simnibullion.admin',
+    versionCode: 1,
   },
   extra: {
     apiUrl: process.env.API_URL || ENV[CURRENT_ENV].apiUrl,
     env: CURRENT_ENV,
+    eas: {
+      projectId: '5b52940c-0dc3-49c4-b5e0-cc4d803493e1',
+    },
   },
   plugins: ['expo-secure-store', 'expo-font'],
 });
