@@ -30,11 +30,15 @@ export default function SettingsScreen() {
 
   const [goldMin, setGoldMin] = useState('');
   const [silverMin, setSilverMin] = useState('');
+  const [goldSpot, setGoldSpot] = useState('');
+  const [silverSpot, setSilverSpot] = useState('');
 
   useEffect(() => {
     if (config) {
       setGoldMin(String(config.goldMinBuyGrams));
       setSilverMin(String(config.silverMinBuyGrams));
+      setGoldSpot(String(config.goldSpotPerGram ?? 0));
+      setSilverSpot(String(config.silverSpotPerGram ?? 0));
     }
   }, [config]);
 
@@ -47,8 +51,21 @@ export default function SettingsScreen() {
       Alert.alert('Validation', 'Enter a valid silver minimum');
       return;
     }
+    if (goldSpot === '' || isNaN(Number(goldSpot)) || Number(goldSpot) < 0) {
+      Alert.alert('Validation', 'Enter a valid gold spot price');
+      return;
+    }
+    if (silverSpot === '' || isNaN(Number(silverSpot)) || Number(silverSpot) < 0) {
+      Alert.alert('Validation', 'Enter a valid silver spot price');
+      return;
+    }
     updateConfig.mutate(
-      { goldMinBuyGrams: Number(goldMin), silverMinBuyGrams: Number(silverMin) },
+      {
+        goldMinBuyGrams: Number(goldMin),
+        silverMinBuyGrams: Number(silverMin),
+        goldSpotPerGram: Number(goldSpot),
+        silverSpotPerGram: Number(silverSpot),
+      },
       {
         onSuccess: () => Alert.alert('Saved', 'Price config updated successfully'),
         onError: () => Alert.alert('Error', 'Failed to update config'),
@@ -81,8 +98,42 @@ export default function SettingsScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll}>
+        {/* Manual Spot Price */}
+        <Text style={styles.sectionLabel}>Manual Spot Price (₹ / gram)</Text>
+        <Text style={styles.helperText}>
+          Used when the live feed is unavailable. Final buy price = spot + each product&apos;s premium.
+        </Text>
+        <View style={styles.card}>
+          {configLoading ? (
+            <ActivityIndicator style={{ paddingVertical: 20 }} color={colors.accent} />
+          ) : (
+            <>
+              <Field label="Gold Spot (₹/g)">
+                <TextInput
+                  style={styles.input}
+                  value={goldSpot}
+                  onChangeText={setGoldSpot}
+                  keyboardType="decimal-pad"
+                  placeholder="e.g. 9200"
+                  placeholderTextColor={colors.textMuted}
+                />
+              </Field>
+              <Field label="Silver Spot (₹/g)" last>
+                <TextInput
+                  style={styles.input}
+                  value={silverSpot}
+                  onChangeText={setSilverSpot}
+                  keyboardType="decimal-pad"
+                  placeholder="e.g. 110"
+                  placeholderTextColor={colors.textMuted}
+                />
+              </Field>
+            </>
+          )}
+        </View>
+
         {/* Price Config */}
-        <Text style={styles.sectionLabel}>Minimum Buy Configuration</Text>
+        <Text style={[styles.sectionLabel, { marginTop: 24 }]}>Minimum Buy Configuration</Text>
 
         {/* Current config (read-only) */}
         <View style={[styles.card, { marginBottom: 16 }]}>
@@ -198,6 +249,14 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.8,
     marginBottom: 12,
+  },
+  helperText: {
+    fontFamily: fonts.interRegular,
+    fontSize: 12,
+    color: colors.textMuted,
+    marginTop: -6,
+    marginBottom: 12,
+    lineHeight: 17,
   },
 
   card: {

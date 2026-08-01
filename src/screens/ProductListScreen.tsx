@@ -67,7 +67,7 @@ export default function ProductListScreen() {
               productId: item.id,
               name: item.name,
               metal: item.metal,
-              premiumPerGram: item.premiumPerGram,
+              premiumPerGram: String(item.premiumPerGram),
               minQuantityGrams: item.minQuantityGrams,
               unitSizeGrams: item.unitSizeGrams,
               subtitle: item.subtitle,

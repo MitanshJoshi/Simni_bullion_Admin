@@ -190,6 +190,8 @@ export async function activateUser(userId: string): Promise<void> {
 export interface PriceConfig {
   goldMinBuyGrams: number;
   silverMinBuyGrams: number;
+  goldSpotPerGram: number;
+  silverSpotPerGram: number;
 }
 
 export async function getPriceConfig(): Promise<PriceConfig> {

@@ -9,7 +9,6 @@ import {
   TextInput,
   ActivityIndicator,
   Alert,
-  Image,
   Linking,
   KeyboardAvoidingView,
   Platform,

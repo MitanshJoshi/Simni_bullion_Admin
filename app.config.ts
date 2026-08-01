@@ -2,13 +2,13 @@ import { ExpoConfig, ConfigContext } from 'expo/config';
 
 const ENV = {
   local: {
-    apiUrl: 'http://192.168.1.2:3000',
+    apiUrl: 'http://192.168.1.7:3000',
   },
   development: {
-    apiUrl: 'https://simni-bullion-app-be.onrender.com',
+    apiUrl: 'https://simni-bullion-app-be-rhbg.onrender.com',
   },
   production: {
-    apiUrl: 'https://simni-bullion-app-be.onrender.com',
+    apiUrl: 'https://simni-bullion-app-be-rhbg.onrender.com',
   },
 };
 
@@ -29,6 +29,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   extra: {
     apiUrl: process.env.API_URL || ENV[CURRENT_ENV].apiUrl,
+    // True when API_URL was set explicitly — tells the client to skip dev
+    // auto-detection and honor the configured URL even while developing.
+    apiUrlForced: Boolean(process.env.API_URL),
     env: CURRENT_ENV,
     eas: {
       projectId: '5b52940c-0dc3-49c4-b5e0-cc4d803493e1',
