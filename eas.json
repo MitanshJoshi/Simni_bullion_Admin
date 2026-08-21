@@ -30,9 +30,9 @@
         "track": "internal"
       },
       "ios": {
-        "appleId": "your-apple-id@example.com",
-        "ascAppId": "YOUR_APP_STORE_CONNECT_APP_ID",
-        "appleTeamId": "YOUR_APPLE_TEAM_ID"
+        "appleId": "support@simnibullion.com",
+        "ascAppId": "6803792476",
+        "appleTeamId": "A2BAB55665"
       }
     }
   }
