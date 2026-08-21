@@ -103,6 +103,7 @@ export interface AdminProduct {
   premiumPerGram: number;
   unitSizeGrams: number | null;
   minQuantityGrams: number;
+  quantityPresetsGrams: number[] | null;
   buyPricePerGram: number;
   isActive: boolean;
   sortOrder: number;
@@ -116,6 +117,7 @@ export interface ProductInput {
   premiumPerGram: number;
   minQuantityGrams: number;
   unitSizeGrams?: number | null;
+  quantityPresetsGrams?: number[] | null;
   subtitle?: string;
   isActive?: boolean;
 }

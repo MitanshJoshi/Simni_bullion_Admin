@@ -70,6 +70,7 @@ export default function ProductListScreen() {
               premiumPerGram: String(item.premiumPerGram),
               minQuantityGrams: item.minQuantityGrams,
               unitSizeGrams: item.unitSizeGrams,
+              quantityPresetsGrams: item.quantityPresetsGrams,
               subtitle: item.subtitle,
               isActive: item.isActive,
             })

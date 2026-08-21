@@ -32,6 +32,7 @@ export default function ProductFormScreen() {
   const [premium, setPremium] = useState(params?.premiumPerGram ?? '');
   const [minQty, setMinQty] = useState(params?.minQuantityGrams?.toString() ?? '');
   const [unitSize, setUnitSize] = useState(params?.unitSizeGrams?.toString() ?? '');
+  const [presets, setPresets] = useState(params?.quantityPresetsGrams?.join(', ') ?? '');
   const [subtitle, setSubtitle] = useState(params?.subtitle ?? '');
   const [isActive, setIsActive] = useState(params?.isActive ?? true);
 
@@ -44,12 +45,27 @@ export default function ProductFormScreen() {
     if (!premium || isNaN(Number(premium))) { Alert.alert('Validation', 'Valid premium per gram is required'); return; }
     if (!minQty || isNaN(Number(minQty))) { Alert.alert('Validation', 'Valid minimum quantity is required'); return; }
 
+    let quantityPresetsGrams: number[] | null = null;
+    if (!unitSize && presets.trim()) {
+      const parsed = presets.split(',').map((s) => Number(s.trim()));
+      if (parsed.length !== 4 || parsed.some((n) => isNaN(n) || n <= 0)) {
+        Alert.alert('Validation', 'Quantity presets must be exactly 4 comma-separated positive numbers');
+        return;
+      }
+      if (parsed.some((n) => n < Number(minQty))) {
+        Alert.alert('Validation', `Quantity presets must all be >= minimum order quantity (${minQty}g)`);
+        return;
+      }
+      quantityPresetsGrams = parsed;
+    }
+
     const input = {
       name: name.trim(),
       metal,
       premiumPerGram: Number(premium),
       minQuantityGrams: Number(minQty),
       unitSizeGrams: unitSize ? Number(unitSize) : null,
+      quantityPresetsGrams,
       subtitle: subtitle.trim() || undefined,
       isActive,
     };
@@ -140,6 +156,19 @@ export default function ProductFormScreen() {
             keyboardType="decimal-pad"
           />
         </Field>
+
+        {!unitSize && (
+          <Field label="Quantity Presets (grams) — exactly 4, comma-separated">
+            <TextInput
+              style={styles.input}
+              value={presets}
+              onChangeText={setPresets}
+              placeholder="e.g. 5, 10, 25, 50"
+              placeholderTextColor={colors.textMuted}
+              keyboardType="numbers-and-punctuation"
+            />
+          </Field>
+        )}
 
         <Field label="Minimum Order Quantity (grams)">
           <TextInput

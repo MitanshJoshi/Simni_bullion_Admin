@@ -28,6 +28,7 @@ export type AppStackParamList = {
     premiumPerGram?: string;
     minQuantityGrams?: number;
     unitSizeGrams?: number | null;
+    quantityPresetsGrams?: number[] | null;
     subtitle?: string | null;
     isActive?: boolean;
   } | undefined;

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as adminService from '../services/adminService';
-import type { OrderStatus, ListUsersParams, AuditLogParams, ProductInput } from '../services/adminService';
+import type { OrderStatus, ListUsersParams, AuditLogParams, ProductInput, AdminProduct } from '../services/adminService';
 
 export const KYC_PENDING_KEY = ['admin', 'kyc', 'pending'] as const;
 export const ORDERS_KEY = (status?: OrderStatus) => ['admin', 'orders', status] as const;
@@ -95,7 +95,14 @@ export function useCreateProduct() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (input: ProductInput) => adminService.createProduct(input),
-    onSuccess: () => {
+    onSuccess: (product) => {
+      // Patch the cache synchronously with the mutation's own (already-fresh)
+      // response so the list is correct immediately — invalidateQueries alone
+      // triggers only an async background refetch, which isn't guaranteed to
+      // finish before the caller navigates back and re-reads the list.
+      qc.setQueryData<AdminProduct[]>(PRODUCTS_KEY, (old) =>
+        old ? [...old, product] : old
+      );
       qc.invalidateQueries({ queryKey: PRODUCTS_KEY });
     },
   });
@@ -106,7 +113,10 @@ export function useUpdateProduct() {
   return useMutation({
     mutationFn: ({ id, input }: { id: string; input: Partial<ProductInput> }) =>
       adminService.updateProduct(id, input),
-    onSuccess: () => {
+    onSuccess: (product) => {
+      qc.setQueryData<AdminProduct[]>(PRODUCTS_KEY, (old) =>
+        old ? old.map((p) => (p.id === product.id ? product : p)) : old
+      );
       qc.invalidateQueries({ queryKey: PRODUCTS_KEY });
     },
   });
@@ -116,7 +126,10 @@ export function useDeleteProduct() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => adminService.deleteProduct(id),
-    onSuccess: () => {
+    onSuccess: (_data, id) => {
+      qc.setQueryData<AdminProduct[]>(PRODUCTS_KEY, (old) =>
+        old ? old.filter((p) => p.id !== id) : old
+      );
       qc.invalidateQueries({ queryKey: PRODUCTS_KEY });
     },
   });
