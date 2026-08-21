@@ -22,6 +22,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     bundleIdentifier: 'com.simnibullion.admin',
     supportsTablet: true,
     buildNumber: '1',
+    infoPlist: {
+      // App only uses standard HTTPS/TLS — exempt from export compliance.
+      // Prevents App Store Connect from blocking each submission with the
+      // "missing compliance" prompt.
+      ITSAppUsesNonExemptEncryption: false,
+    },
   },
   android: {
     package: 'com.simnibullion.admin',
